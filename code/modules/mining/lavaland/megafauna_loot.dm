@@ -101,6 +101,7 @@
 
 /obj/item/hierophant_club/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	. = ..()
+	. |= AFTERATTACK_PROCESSED_ITEM
 	// If our target is the beacon and the hierostaff is next to the beacon, we're trying to pick it up.
 	if((target == beacon) && target.Adjacent(src))
 		return
@@ -385,6 +386,7 @@
 	RegisterSignal(soul, COMSIG_MOB_ATTACK_RANGED, PROC_REF(on_attack))
 	RegisterSignal(soul, COMSIG_MOB_ATTACK_RANGED_SECONDARY, PROC_REF(on_secondary_attack))
 	RegisterSignal(src, COMSIG_ATOM_INTEGRITY_CHANGED, PROC_REF(on_integrity_change))
+	AddElement(/datum/element/bane, mob_biotypes = MOB_PLANT, damage_multiplier = 0.5, requires_combat_mode = FALSE)
 
 /obj/item/soulscythe/examine(mob/user)
 	. = ..()
@@ -779,6 +781,7 @@
 	. = ..()
 	if(timer > world.time)
 		return
+	. |= AFTERATTACK_PROCESSED_ITEM
 	if(is_type_in_typecache(target, banned_turfs))
 		return
 	if(target in view(user.client.view, get_turf(user)))
@@ -843,7 +846,7 @@
 	/// Whether the saw is open or not
 	var/is_open = FALSE
 	/// List of factions we deal bonus damage to
-	var/list/nemesis_factions = list("mining", "boss")
+	var/list/nemesis_factions = list(FACTION_MINING, FACTION_BOSS)
 	/// Amount of damage we deal to the above factions
 	var/faction_bonus_force = 30
 	/// Whether the cleaver is actively AoE swiping something.
@@ -1009,6 +1012,7 @@
 
 /obj/item/storm_staff/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	. = ..()
+	. |= AFTERATTACK_PROCESSED_ITEM
 	if(!thunder_charges)
 		balloon_alert(user, "needs to charge!")
 		return

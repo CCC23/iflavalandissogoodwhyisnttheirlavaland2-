@@ -20,7 +20,7 @@
 /obj/item/clothing/head/utility/chefhat/Initialize(mapload)
 	. = ..()
 
-	create_storage(type = /datum/storage/pockets/chefhat)
+	create_storage(storage_type = /datum/storage/pockets/chefhat)
 
 /obj/item/clothing/head/utility/chefhat/i_am_assuming_direct_control
 	desc = "The commander in chef's head wear. Upon closer inspection, there seem to be dozens of tiny levers, buttons, dials, and screens inside of this hat. What the hell...?"
@@ -118,6 +118,8 @@
 	inhand_icon_state = "det_hat"
 	var/candy_cooldown = 0
 	dog_fashion = /datum/dog_fashion/head/detective
+	///Path for the flask that spawns inside their hat roundstart
+	var/flask_path = /obj/item/reagent_containers/cup/glass/flask/det
 
 /datum/armor/fedora_det_hat
 	melee = 25
@@ -131,9 +133,9 @@
 /obj/item/clothing/head/fedora/det_hat/Initialize(mapload)
 	. = ..()
 
-	create_storage(type = /datum/storage/pockets/small/fedora/detective)
+	create_storage(storage_type = /datum/storage/pockets/small/fedora/detective)
 
-	new /obj/item/reagent_containers/cup/glass/flask/det(src)
+	new flask_path(src)
 
 /obj/item/clothing/head/fedora/det_hat/examine(mob/user)
 	. = ..()
@@ -141,7 +143,7 @@
 
 /obj/item/clothing/head/fedora/det_hat/AltClick(mob/user)
 	. = ..()
-	if(loc != user || !user.canUseTopic(src, be_close = TRUE, no_dexterity = TRUE, no_tk = FALSE, need_hands = TRUE))
+	if(loc != user || !user.can_perform_action(src, NEED_DEXTERITY|NEED_HANDS))
 		return
 	if(candy_cooldown < world.time)
 		var/obj/item/food/candy_corn/CC = new /obj/item/food/candy_corn(src)
@@ -150,6 +152,9 @@
 		candy_cooldown = world.time+1200
 	else
 		to_chat(user, span_warning("You just took a candy corn! You should wait a couple minutes, lest you burn through your stash."))
+
+/obj/item/clothing/head/fedora/det_hat/minor
+	flask_path = /obj/item/reagent_containers/cup/glass/flask/det/minor
 
 //Mime
 /obj/item/clothing/head/beret
@@ -191,12 +196,12 @@
 	icon_state = "beret_badge"
 	greyscale_config = /datum/greyscale_config/beret_badge
 	greyscale_config_worn = /datum/greyscale_config/beret_badge/worn
-	greyscale_colors = "#39393f#FFCE5B"
+	greyscale_colors = "#39393f#f0cc8f"
 
 /obj/item/clothing/head/hats/hos/beret/navyhos
 	name = "head of security's formal beret"
 	desc = "A special beret with the Head of Security's insignia emblazoned on it. A symbol of excellence, a badge of courage, a mark of distinction."
-	greyscale_colors = "#3C485A#FFCE5B"
+	greyscale_colors = "#638799#f0cc8f"
 
 /obj/item/clothing/head/hats/hos/beret/syndicate
 	name = "syndicate beret"
@@ -336,12 +341,12 @@
 /obj/item/clothing/head/beret/sec/navywarden
 	name = "warden's beret"
 	desc = "A special beret with the Warden's insignia emblazoned on it. For wardens with class."
-	greyscale_colors = "#3C485A#00AEEF"
+	greyscale_colors = "#638799#ebebeb"
 	strip_delay = 60
 
 /obj/item/clothing/head/beret/sec/navyofficer
 	desc = "A special beret with the security insignia emblazoned on it. For officers with class."
-	greyscale_colors = "#3C485A#FF0000"
+	greyscale_colors = "#638799#a52f29"
 
 //Science
 /obj/item/clothing/head/beret/science
@@ -401,12 +406,6 @@
 	greyscale_colors = "#FFBC30"
 	flags_1 = NONE
 
-/obj/item/clothing/head/beret/atmos
-	name = "atmospheric beret"
-	desc = "While \"pipes\" and \"style\" might not rhyme, this beret sure makes you feel like they should!"
-	greyscale_colors = "#FFDE15"
-	flags_1 = NONE
-
 //Cargo
 /obj/item/clothing/head/beret/cargo
 	name = "cargo beret"
@@ -419,15 +418,6 @@
 	name = "treasure hunter's fedora"
 	desc = "You got red text today kid, but it doesn't mean you have to like it."
 	icon_state = "curator"
-
-//Miscellaneous
-/obj/item/clothing/head/beret/black
-	name = "black beret"
-	desc = "A black beret, perfect for war veterans and dark, brooding, anti-hero mimes."
-	icon_state = "beret"
-	greyscale_config = /datum/greyscale_config/beret
-	greyscale_config_worn = /datum/greyscale_config/beret/worn
-	greyscale_colors = "#3f3c40"
 
 /obj/item/clothing/head/beret/durathread
 	name = "durathread beret"
